@@ -11,7 +11,6 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  console.log(req);
   const { _id } = req.params;
   readFile(pathToData).then(data => {
     const user = data.find((item) => {
