@@ -1,11 +1,12 @@
 const router = require('express').Router();
-const { getCards } = require('../controllers/cards.js');
-const { getUsers, getUser } = require('../controllers/users.js');
+const cardsRouter = require('./cards.js');
+const usersRouter = require('./users.js');
+const userIdRouter = require('./user_id.js')
 
-router.get('/cards', getCards);
+router.use('/', cardsRouter);
 
-router.get('/users', getUsers);
+router.use('/', userIdRouter);
 
-router.get('/users/:_id', getUser);
+router.use('/', usersRouter);
 
 module.exports = router;

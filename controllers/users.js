@@ -6,22 +6,24 @@ module.exports.getUsers = (req, res) => {
   readFile(pathToData)
     .then((data) => res.send(data))
     .catch((err) => {
-      res.status(404).send({ message: "Запрашиваемый ресурс не найден" });
+      res.status(500).send({ message: "Запрашиваемый ресурс не найден" });
     });
 };
 
-module.exports.getUser = (req, res) => {
-  console.log(req);
-  const { _id } = req.params;
-  readFile(pathToData).then(data => {
-    console.log(data);
-    const user = data.find((item) => {
-      return item._id === _id;
-    });
-    if (!user) {
-      return res.status(404).send({ message: "Нет пользователя с таким id" });
-    }
+// module.exports.getUser = (req, res) => {
+//   console.log(req);
+//   const { _id } = req.params;
+//   readFile(pathToData).then(data => {
+//     const user = data.find((item) => {
+//       return item._id === _id;
+//     })
+//     if (!user) {
+//       return res.status(404).send({ message: "Нет пользователя с таким id" });
+//     }
 
-    res.send(user);
-  });
-};
+//     res.send(user);
+//   })
+//   .catch((err) => {
+//     res.status(500).send({ message: "Запрашиваемый ресурс не найден" });
+//   });
+// };
