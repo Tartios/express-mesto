@@ -10,20 +10,20 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-// module.exports.getUser = (req, res) => {
-//   console.log(req);
-//   const { _id } = req.params;
-//   readFile(pathToData).then(data => {
-//     const user = data.find((item) => {
-//       return item._id === _id;
-//     })
-//     if (!user) {
-//       return res.status(404).send({ message: "Нет пользователя с таким id" });
-//     }
+module.exports.getUser = (req, res) => {
+  console.log(req);
+  const { _id } = req.params;
+  readFile(pathToData).then(data => {
+    const user = data.find((item) => {
+      return item._id === _id;
+    })
+    if (!user) {
+      return res.status(404).send({ message: "Нет пользователя с таким id" });
+    }
 
-//     res.send(user);
-//   })
-//   .catch((err) => {
-//     res.status(500).send({ message: "Запрашиваемый ресурс не найден" });
-//   });
-// };
+    res.send(user);
+  })
+  .catch((err) => {
+    res.status(500).send({ message: "Запрашиваемый ресурс не найден" });
+  });
+};
