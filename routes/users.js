@@ -3,6 +3,6 @@ const { getUsers, getUser } = require('../controllers/users.js');
 
 router.get('/', getUsers);
 
-router.get('/:_id', getUser);
+router.get('/:userId', getUser);
 
 module.exports = router;

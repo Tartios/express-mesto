@@ -1,5 +1,6 @@
 const path = require('path');
 const readFile = require('../utils/fsReader.js');
+const mongoose = require('mongoose');
 
 const pathToData = path.join(__dirname, '..', 'data', 'users.json');
 
@@ -25,3 +26,24 @@ module.exports.getUser = (req, res) => {
       res.status(500).send({ message: 'Запрашиваемый ресурс не найден' });
     });
 };
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 2,
+    maxlength: 30,
+  },
+  about: {
+    type: String,
+    required: true,
+    minlength: 2,
+    maxlength: 30,
+  },
+  avatar: {
+    type: String,
+    required: true,
+  },
+});
+
+module.exports = mongoose.model('user', userSchema);
