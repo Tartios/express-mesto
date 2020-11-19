@@ -1,11 +1,8 @@
-const path = require('path');
-const readFile = require('../utils/fsReader.js');
+
 const mongoose = require('mongoose');
 
-const pathToData = path.join(__dirname, '..', 'data', 'users.json');
-
 module.exports.getUsers = (req, res) => {
-  readFile(pathToData)
+  userModel.find()
     .then((data) => res.send(data))
     .catch(() => {
       res.status(500).send({ message: 'Запрашиваемый ресурс не найден' });
@@ -14,8 +11,8 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   const { _id } = req.params;
-  readFile(pathToData).then((data) => {
-    const user = data.find((item) => item._id === _id);
+  userModel.findOne({_id})
+  .then(user => {
     if (!user) {
       return res.status(404).send({ message: 'Нет пользователя с таким id' });
     }
@@ -26,6 +23,11 @@ module.exports.getUser = (req, res) => {
       res.status(500).send({ message: 'Запрашиваемый ресурс не найден' });
     });
 };
+
+module.exports.createUser = (req, res) => {
+  console.log(req.body)
+  return null
+}
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -46,4 +48,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('user', userSchema);
+const userModel = mongoose.model('user', userSchema);
+
+module.exports = userModel;
