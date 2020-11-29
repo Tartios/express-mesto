@@ -1,6 +1,11 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const Routers = require('./routes/routers.js');
+
+const { PORT = 3000 } = process.env;
+const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -8,10 +13,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
 });
 
-const { PORT = 3000 } = process.env;
-const app = express();
-const Routers = require('./routes/routers.js');
+app.use(bodyParser.json());
+app.use((req, res, next) => {
+  req.user = {
+    _id: '5fc13f5d9955f90ea85ba9f0',
+  };
 
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', Routers);

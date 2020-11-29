@@ -1,5 +1,4 @@
-
-const mongoose = require('mongoose');
+const userModel = require('../models/user.js');
 
 module.exports.getUsers = (req, res) => {
   userModel.find()
@@ -11,43 +10,39 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   const { _id } = req.params;
-  userModel.findOne({_id})
-  .then(user => {
-    if (!user) {
-      return res.status(404).send({ message: 'Нет пользователя с таким id' });
-    }
+  userModel.findOne({ _id })
+    .orFail(() => {
+      const error = new Error('Нет пользователя с таким id');
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'Нет пользователя с таким id' });
+      }
 
-    return res.send(user);
-  })
-    .catch(() => {
-      res.status(500).send({ message: 'Запрашиваемый ресурс не найден' });
+      return res.send(user);
+    })
+    .catch((err) => {
+      if (err.kind === 'ObjectId') {
+        res.send({ message: 'Данные переданные пользователем некорректны.' });
+      } else if (err.statusCode === 404) {
+        res.send({ message: 'Пользователь с таким id не найден.' });
+      } else {
+        res.status(500).send({ message: 'Запрашиваемый ресурс не найден.' });
+      }
     });
 };
 
 module.exports.createUser = (req, res) => {
-  console.log(req.body)
-  return null
-}
-
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    minlength: 2,
-    maxlength: 30,
-  },
-  about: {
-    type: String,
-    required: true,
-    minlength: 2,
-    maxlength: 30,
-  },
-  avatar: {
-    type: String,
-    required: true,
-  },
-});
-
-const userModel = mongoose.model('user', userSchema);
-
-module.exports = userModel;
+  const { name, about, avatar } = req.body;
+  userModel.create({ name, about, avatar })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.send({ message: err.message });
+      } else {
+        res.send(err);
+      }
+    });
+};

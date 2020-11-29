@@ -1,52 +1,21 @@
-const path = require('path');
-const readFile = require('../utils/fsReader.js');
-const mongoose = require('mongoose');
-const { link } = require('fs');
-
-const pathToData = path.join(__dirname, '..', 'data', 'cards.json');
+const cardModel = require('../models/card.js');
 
 module.exports.getCards = (req, res) => {
-  readFile(pathToData)
+  cardModel.find()
     .then((data) => res.send(data))
-    .catch(() => {
-      res.status(500).send({ message: 'Запрашиваемый ресурс не найден' });
-    });
+    .catch((err) => res.status(500).send(err));
 };
 
-const cardSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    minlength: 2,
-    maxlength: 30,
-  },
-  link: {
-    type: String,
-    required: true,
-  },
-  owner: {
-    type: ObjectId,
-    required: true,
-  },
-  likes: [
-    {
-      name: {
-        type: String,
-      },
-      about: {
-        type: String,
-      },
-      avatar: {
-        type: link,
-      },
-      id: {
-        type: String,
-      }
-    }
-  ],
-  createdAt: {
-    Date.now
-  }
-})
+module.exports.createCard = (req, res) => {
+  const owner = req.user._id;
+  cardModel.create({ owner, ...req.body })
+    .then((card) => res.send({ data: card }))
+    .catch((err) => res.status(500).send(err));
+};
 
-module.exports = mongoose.model('card', cardSchema);
+module.exports.deleteCard = (req, res) => {
+  const { _id } = req.params;
+  cardModel.findByIdAndRemove({ _id })
+    .then((card) => res.send({ data: card }))
+    .catch((err) => res.status(500).send(err));
+};
